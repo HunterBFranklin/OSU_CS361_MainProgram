@@ -1,0 +1,100 @@
+<!-- Hunter B. Franklin
+CS361-400, Spring 2026
+
+Assignment #5: Main Program Implementation
+State: Sprint #1 implemented
+Due: 05/04/2026 -->
+
+<!-- HTML setup: -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Habit-at — Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-dashboard">
+
+  <!-- Nav. bar (consistent throughout): -->
+  <nav id="nav-bar">
+    <div class="nav-logo">
+      <img src="habitat_logo.png" alt="Habit-at logo" class="logo-img logo-small" />
+    </div>
+    <span id="today-date"></span>
+    <div class="nav-actions">
+      <button class="btn-primary" onclick="window.location.href='addHabit.html'">+ Add</button>
+    </div>
+  </nav>
+
+  <!-- Daily progress or completion bar: -->
+  <div id="daily-summary">
+    <span class="summary-label">Daily Completion</span>
+    <progress id="daily-bar" value="0" max="1"></progress>
+    <span id="daily-count">0 of 0</span>
+  </div>
+
+  <!-- Habit list: -->
+  <ul id="habit-list"></ul>
+
+  <!-- Empty dash. state (includes separate add button): -->
+  <div id="empty-state" hidden>
+    <p class="empty-quote">
+      "It does not matter how slowly you go as long as you do not stop." — Confucius
+    </p>
+    <div class="empty-bird-placeholder"></div>
+    <p>This nest is empty!</p>
+    <p>Time to wing it and add a habit to help your goals take flight.</p>
+    <button class="btn-primary btn-large" onclick="window.location.href='addHabit.html'">
+      + Add a New Habit
+    </button>
+  </div>
+
+  <!-- Edit modal (on dash., gives add habit features and updates JSON): -->
+  <div id="edit-modal-overlay" class="modal-overlay" hidden>
+    <div class="modal-card">
+
+      <h2>Edit Habit</h2>
+
+      <details>
+        <summary>View raw data</summary>
+        <pre id="modal-json"></pre>
+      </details>
+
+      <input type="hidden" id="modal-id" />
+
+      <label for="modal-name">Habit Name: <span class="required">*</span></label>
+      <input id="modal-name" type="text" />
+
+      <label for="modal-frequency">Frequency:</label>
+      <select id="modal-frequency" onchange="toggleCustomFreq()">
+        <option value="hourly">Hourly</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="custom">Custom</option>
+      </select>
+      <input type="text" id="modal-frequency-custom" placeholder="e.g. twice a day" hidden />
+
+      <label for="modal-duration">Goal Duration:</label>
+      <select id="modal-duration" onchange="toggleCustomDuration()">
+        <option value="1 day">1 Day</option>
+        <option value="1 week">1 Week</option>
+        <option value="1 month">1 Month</option>
+        <option value="1 year">1 Year</option>
+        <option value="custom">Custom</option>
+      </select>
+      <input type="text" id="modal-duration-custom" placeholder="e.g. 6 weeks" hidden />
+
+      <p id="modal-error" class="error-msg" hidden></p>
+
+      <div class="modal-buttons">
+        <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveEditModal()">Save Changes</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

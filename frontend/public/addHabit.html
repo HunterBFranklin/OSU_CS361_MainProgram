@@ -1,0 +1,97 @@
+<!-- Hunter B. Franklin
+CS361-400, Spring 2026
+
+Assignment #5: Main Program Implementation
+State: Sprint #1 implemented
+Due: 05/04/2026 -->
+
+<!-- HTML setup: -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Habit-at — Add Habit</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-add-habit">
+
+  <!-- Nav. bar (consistent throughout): -->
+  <nav id="add-nav-bar">
+    <button class="btn-back" onclick="goBack()">&lsaquo; Back</button>
+    <span class="nav-title">Add a New Habit</span>
+  </nav>
+
+  <!-- Add / Save Habit form: -->
+  <div class="form-card">
+
+    <!-- Habit name label: -->
+    <label for="add-name">Habit Name: <span class="required">*</span></label>
+    <input id="add-name" type="text" placeholder="e.g. Brush Teeth" />
+
+    <!-- Button to show 'to be implemented' Categories -->
+    <label class="label-disabled">Category: (Coming Sprint 2)</label>
+    <select id="add-category" disabled class="input-disabled">
+      <option value="">-- Not yet available --</option>
+    </select>
+    
+    <!-- To be implemented: -->
+    <!-- Category Buttons (including Custom): -->
+    <!-- <label for="add-category">Category: <span class="required">*</span></label>
+    <select id="add-category">
+      <option value="">-- Select --</option>
+      <option>Health</option>
+      <option>Fitness</option>
+      <option>Mindfulness</option>
+      <option>Productivity</option>
+      <option>Social</option>
+      <option>Personal</option>
+      <option>Learning</option>
+      <option>Other</option>
+    </select> -->
+   
+
+    <!-- Frequency buttons: -->
+    <p class="field-label">Goal Frequency:</p>
+    <div class="pill-group">
+      <button type="button" class="pill" onclick="selectFreq(this)" data-value="hourly">Hourly</button>
+      <button type="button" class="pill active" onclick="selectFreq(this)" data-value="daily">Daily</button>
+      <button type="button" class="pill" onclick="selectFreq(this)" data-value="weekly">Weekly</button>
+      <button type="button" class="pill" onclick="selectFreq(this)" data-value="monthly">Monthly</button>
+      <button type="button" class="pill" onclick="selectFreq(this)" data-value="custom">Custom</button>
+    </div>
+    <input type="hidden" id="add-frequency" value="daily" />
+    <input type="text" id="add-frequency-custom" placeholder="e.g. twice a day" hidden />
+
+    <!-- All duration buttons (including Custom): -->
+    <p class="field-label">Goal Duration:</p>
+    <div class="pill-group">
+      <button type="button" class="pill" onclick="selectDuration(this)" data-value="1 day">1 Day</button>
+      <button type="button" class="pill" onclick="selectDuration(this)" data-value="1 week">1 Week</button>
+      <button type="button" class="pill active" onclick="selectDuration(this)" data-value="1 month">1 Month</button>
+      <button type="button" class="pill" onclick="selectDuration(this)" data-value="1 year">1 Year</button>
+      <button type="button" class="pill" onclick="selectDuration(this)" data-value="custom">Custom</button>
+    </div>
+    <input type="hidden" id="add-duration" value="1 month" />
+    <input type="text" id="add-duration-custom" placeholder="e.g. 6 weeks" hidden />
+
+    <!-- Error message & Save Habit button: -->
+    <p id="add-error" class="error-msg" hidden></p>
+    <p><small><span class="required">*</span> Required fields</small></p>
+    <button class="btn-primary btn-save" onclick="saveHabit()">Save Habit</button>
+
+  </div>
+
+  <!-- To be implemented: -->
+  <!-- Back-out Confirmation Modals: -->
+  <!-- <div id="back-confirm" class="confirm-modal" hidden>
+    <p><strong>Are you sure you want to go back?</strong></p>
+    <p>You may lose your unsaved habit.</p>
+    <div class="confirm-buttons">
+      <button class="btn-danger" onclick="confirmGoBack()">Yes, go back</button>
+      <button class="btn-primary" onclick="cancelGoBack()">No, return to Habit</button>
+    </div>
+  </div> -->
+
+  <script src="addHabit.js"></script>
+</body>
+</html>

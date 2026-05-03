@@ -1,0 +1,149 @@
+<!-- Hunter B. Franklin
+CS361-400, Spring 2026
+
+Assignment #5: Main Program Implementation
+State: Sprint #1 implemented
+Due: 05/04/2026 -->
+
+<!-- HTML setup: -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Habit-at — Getting Started</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-onboarding">
+
+  <!-- Header: -->
+  <header class="ob-header">
+    <div class="logo-inline">
+      <img src="habitat_logo.png" alt="Habit-at logo" class="logo-img logo-small" />
+    </div>
+    <h1 id="ob-step-title">Welcome to Habit-at!</h1>
+  </header>
+
+
+  <!-- Content area: -->
+  <main class="ob-content">
+
+    <!-- Step #1: Welcome: -->
+    <div id="step-1" class="ob-step">
+      <p>Let's get you onboarded! This should only take <strong>60 seconds.</strong></p>
+      <p>Over the next three steps you will:</p>
+      <ul>
+        <li>Create your first habit</li>
+        <li>Navigate the Dashboard</li>
+        <li>View all your Habits</li>
+      </ul>
+      <div class="ob-aside">
+        <p><strong>New in this version:</strong></p>
+        <ul>
+          <li>Add habits with custom frequencies and durations</li>
+          <li>View all habits in one unified Dashboard</li>
+        </ul>
+        <p><strong>Coming soon:</strong></p>
+        <ul>
+          <li>Streaks for Habits</li>
+          <li>Marking Habits complete</li>
+          <li>Search Habits</li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!-- Step #2: Add your first habit: -->
+    <div id="step-2" class="ob-step" hidden>
+
+      <p>Give it a try! Fill in your first habit below.</p>
+
+      <!-- Habit name (required): -->
+      <label for="ob-name">Habit Name: <span class="required">*</span></label>
+      <input id="ob-name" type="text" placeholder="e.g. Drink Water" />
+
+      <!-- Category (to be implemented): -->
+      <label class="label-disabled">Category: (Coming Sprint 2)</label>
+      <select id="ob-category" disabled class="input-disabled">
+        <option value="">-- Not yet available --</option>
+      </select>
+      <!--
+      <label for="ob-category">Category: <span class="required">*</span></label>
+      <select id="ob-category">
+        <option value="">-- Select --</option>
+        <option>Health</option>
+        <option>Fitness</option>
+        <option>Mindfulness</option>
+        <option>Productivity</option>
+        <option>Learning</option>
+        <option>Other</option>
+      </select>
+      -->
+
+      <!-- Frequency buttons: -->
+      <p class="field-label">Goal Frequency:</p>
+      <div class="pill-group">
+        <button type="button" class="pill" onclick="selectFreq(this)" data-value="hourly">Hourly</button>
+        <button type="button" class="pill active" onclick="selectFreq(this)" data-value="daily">Daily</button>
+        <button type="button" class="pill" onclick="selectFreq(this)" data-value="weekly">Weekly</button>
+        <button type="button" class="pill" onclick="selectFreq(this)" data-value="monthly">Monthly</button>
+        <button type="button" class="pill" onclick="selectFreq(this)" data-value="custom">Custom</button>
+      </div>
+      <!-- Storing frequency or showing Custom: -->
+      <input type="hidden" id="ob-frequency" value="daily" />
+      <input type="text" id="ob-frequency-custom" placeholder="e.g. twice a day" hidden />
+
+      <!-- Duration buttons: -->
+      <p class="field-label">Goal Duration:</p>
+      <div class="pill-group">
+        <button type="button" class="pill" onclick="selectDuration(this)" data-value="1 day">1 Day</button>
+        <button type="button" class="pill" onclick="selectDuration(this)" data-value="1 week">1 Week</button>
+        <button type="button" class="pill active" onclick="selectDuration(this)" data-value="1 month">1 Month</button>
+        <button type="button" class="pill" onclick="selectDuration(this)" data-value="1 year">1 Year</button>
+        <button type="button" class="pill" onclick="selectDuration(this)" data-value="custom">Custom</button>
+      </div>
+      <!-- Storing duration or showing Custom: -->
+      <input type="hidden" id="ob-duration" value="1 month" />
+      <input type="text" id="ob-duration-custom" placeholder="e.g. 6 weeks" hidden />
+
+      <!-- Error message (for required): -->
+      <p id="ob-error" class="error-msg" hidden></p>
+
+      <p><small><span class="required">*</span> Required fields</small></p>
+
+    </div>
+
+
+    <!-- Step #3: Dashboard: -->
+    <div id="step-3" class="ob-step" hidden>
+      <p>Here's what you'll see on your Dashboard:</p>
+      <ul class="tour-list">
+        <li><strong>Daily Completion bar</strong> — tracks how many habits you've finished today</li>
+        <li><strong>Habit cards</strong> — each shows your habit name, frequency, and duration</li>
+        <li><strong>+ Add button</strong> — adds a new habit anytime from the top bar</li>
+      </ul>
+      <p class="ob-confirm-msg">You're all set! Click <strong>Dashboard</strong> to begin.</p>
+    </div>
+
+  </main>
+
+
+  <!-- Footer (progress back and back/next buttons): -->
+  <footer class="ob-footer">
+
+    <button id="btn-back" class="btn-secondary" onclick="goBack()" hidden>
+      &lsaquo; Back
+    </button>
+
+    <div class="footer-spacer"></div>
+
+    <progress id="ob-progress-bar" value="1" max="3"></progress>
+
+    <button id="btn-next" class="btn-primary" onclick="goNext()">
+      Next &rsaquo;
+    </button>
+
+  </footer>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+/* Hunter B. Franklin
+CS361-400, Spring 2026
+
+Assignment #5: Main Program Implementation
+State: Sprint #1 implemented
+Due: 05/04/2026 */
+
+/* Color palette from the paper prototype:
+     #2d5a27  dark green
+     #7a6040  warm brown 
+     #c8b89a  light tan 
+     #ede0cf  pale tan
+     #f0ede8  off-white
+     #9b3a3a  muted red 
+     #f5f0c8  pale yellow
+*/
+
+/* Base reset: removes default browser config, enforces consistent font and sizing, 
+and includes form controls for font inheritance. */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+input,
+select,
+button,
+textarea,
+pre {
+  font-family: Georgia, "Times New Roman", serif;
+}
+body {
+  font-family: Georgia, "Times New Roman", serif;
+  background-color: #f0ede8;
+  color: #2c2c2c;
+  min-height: 100vh;
+}
+h1 { color: #2d5a27; font-size: 1.6rem; margin-bottom: 0.6rem; }
+h2 { color: #2d5a27; margin-bottom: 0.4rem; }
+p  { margin-bottom: 0.6rem; line-height: 1.6; }
+ul { padding-left: 1.4rem; margin-bottom: 0.8rem; }
+li { margin-bottom: 0.3rem; }
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+}
+input[type="text"],
+select {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #c8b89a;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+}
+input[type="text"]:focus,
+select:focus {
+  outline: 2px solid #7a6040;
+}
+small { color: #666; }
+
+/* Logo: styles for the logo. */
+
+.logo-inline  { display: flex; align-items: center; gap: 0.4rem; }
+.logo-small   { width: 200px; height: 200px; object-fit: contain; }
+
+/* Button (btn): includes all button variants through the app. */
+
+.btn-primary {
+  background-color: #7a6040;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-primary:hover { background-color: #5e4a30; }
+.btn-secondary {
+  background-color: transparent;
+  color: #7a6040;
+  border: 2px solid #7a6040;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-secondary:hover { background-color: #ede0cf; }
+.btn-back {
+  background-color: transparent;
+  color: #7a6040;
+  border: 2px solid #7a6040;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-family: Georgia, "Times New Roman", serif;
+  cursor: pointer;
+}
+.btn-back:hover { background-color: #ede0cf; }
+.btn-danger {
+  background-color: #9b3a3a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-danger:hover { background-color: #7a2c2c; }
+.btn-delete {
+  background: transparent;
+  color: #9b3a3a;
+  border: 1px solid #9b3a3a;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-delete:hover { background-color: #f5e0e0; }
+.btn-large {
+  padding: 0.8rem 2rem;
+  font-size: 1.05rem;
+  width: 100%;
+  max-width: 320px;
+}
+.btn-save {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1.2rem;
+  font-size: 1rem;
+}
+
+/* Required: form submission purposes.*/
+
+.required { color: #9b3a3a; }
+.error-msg {
+  color: #9b3a3a;
+  background-color: #fde8e8;
+  border: 1px solid #e8b4b4;
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* Disabled: Features partially implemented that have been greyed out for this
+submission. */
+.label-disabled {
+  color: #aaa;
+  display: block;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+}
+.input-disabled {
+  background-color: #f0f0f0;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.btn-disabled {
+  background-color: #ccc;
+  color: #888;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: not-allowed;
+}
+
+/* Buttons (frequency, duration): used during form submission (onboarding and 
+add habit). */
+
+.field-label {
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+}
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.pill {
+  background-color: #ede0cf;
+  color: #2c2c2c;
+  border: 1px solid #c8b89a;
+  border-radius: 20px;
+  padding: 0.35rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.pill:hover  { background-color: #c8b89a; }
+.pill.active { background-color: #7a6040; color: #fff; border-color: #7a6040; }
+
+/* Progress bar: global, used in several instances across the app. */
+
+progress {
+  height: 14px;
+  border-radius: 8px;
+  appearance: none;
+  background-color: #ddd;
+  flex: 1;
+}
+progress::-webkit-progress-bar   { background-color: #ddd; border-radius: 8px; }
+progress::-webkit-progress-value { background-color: #7a6040; border-radius: 8px; }
+progress::-moz-progress-bar      { background-color: #7a6040; border-radius: 8px; }
+
+/* Page landing: for centering the habit cards, and element placement. */
+
+.page-landing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+#landing-page {
+  background: #fff;
+  border: 1px solid #c8b89a;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+#landing-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+.logo-animal-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: #ede0cf;
+  border: 2px solid #c8b89a;
+  margin-bottom: 0.4rem;
+}
+#landing-logo .logo-text { font-size: 1.8rem; }
+.landing-quote {
+  font-style: italic;
+  color: #7a6040;
+  text-align: center;
+  border-top: 1px solid #ede0cf;
+  padding-top: 0.8rem;
+}
+#landing-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* Onboarding: layout, fixed header, sticky footer, etc. */
+
+.page-onboarding {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.ob-header {
+  background-color: #fff;
+  border-bottom: 2px solid #c8b89a;
+  padding: 0.4rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.ob-header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.ob-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.8rem 1.5rem;
+  max-width: 620px;
+  width: 100%;
+  margin: 0 auto;
+}
+.ob-aside {
+  background-color: #ede0cf;
+  border: 1px solid #c8b89a;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+}
+.ob-aside p { margin-bottom: 0.3rem; }
+.tour-list li { margin-bottom: 0.7rem; }
+.ob-confirm-msg {
+  margin-top: 1.2rem;
+  font-size: 1rem;
+  color: #2d5a27;
+}
+
+/* Footer (onboarding): behavior and added progress bar. */
+.ob-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  border-top: 2px solid #c8b89a;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.ob-footer progress {
+  flex: 1;
+  height: 24px;
+  border-radius: 24px;
+  appearance: none;
+  background-color: #ddd;
+}
+.ob-footer progress::-webkit-progress-bar {
+  background-color: #ddd;
+  border-radius: 24px;
+}
+.ob-footer progress::-webkit-progress-value {
+  background-color: #7a6040;
+  border-radius: 24px;
+  transition: width 0.4s ease;
+}
+.ob-footer progress::-moz-progress-bar {
+  background-color: #7a6040;
+  border-radius: 24px;
+  transition: width 0.4s ease;
+}
+.ob-progress-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 200px;  /* add this */
+}
+.step-label {
+  font-size: 0.85rem;
+  color: #555;
+}
+.footer-spacer {
+  width: 80px;
+  flex-shrink: 0;
+}
+#btn-back:not([hidden]) ~ .footer-spacer,
+.ob-footer:has(#btn-back:not([hidden])) .footer-spacer {
+  display: none;
+}
+
+/* Dashboard: all interactions and instances found on the dashboard. */
+
+.page-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+#nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border-bottom: 2px solid #c8b89a;
+  padding: 0.2rem 1.5rem;
+  gap: 1rem;
+}
+#today-date {
+  font-size: 2.5rem;
+  color: #555;
+}
+.nav-actions .btn-primary {
+  background-color: #6abf4b;
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 0.6rem 1.8rem;
+  border-radius: 8px;
+  border: none;
+}
+.nav-actions .btn-primary:hover { background-color: #559e3a; }
+#daily-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background-color: #ede0cf;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.95rem;
+}
+.summary-label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+#daily-count { white-space: nowrap; color: #555; }
+#habit-list {
+  list-style: none;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+}
+.habit-card {
+  background-color: #a68c6a;
+  color: #fff;
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  min-height: 90px;
+}
+.habit-card:nth-child(even) {
+  background-color: #c8a97a;
+}
+.habit-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+.habit-name { font-size: 1.2rem; font-weight: bold; }
+.habit-meta { font-size: 0.88rem; opacity: 0.85; }
+.habit-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.habit-progress-bar {
+  flex: 1;
+  height: 14px;
+  border-radius: 14px;
+  appearance: none;
+  background-color: rgba(255,255,255,0.25);
+}
+.habit-progress-bar::-webkit-progress-bar {
+  background-color: rgba(255,255,255,0.25);
+  border-radius: 14px;
+}
+.habit-progress-bar::-webkit-progress-value {
+  background-color: #5a3e28;
+  border-radius: 14px;
+}
+.habit-progress-bar::-moz-progress-bar {
+  background-color: #5a3e28;
+  border-radius: 14px;
+}
+.habit-progress-label {
+  font-size: 0.82rem;
+  white-space: nowrap;
+  opacity: 0.9;
+}
+.habit-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+ /* To be implemented. */
+.btn-complete,
+.btn-delete {
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: not-allowed;
+}
+.chevron {
+  font-size: 1.6rem;
+  opacity: 0.85;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  align-self: center;
+  transition: background 0.15s;
+}
+.chevron:hover { background-color: rgba(255,255,255,0.15); }
+#empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #555;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.empty-quote {
+  font-style: italic;
+  color: #7a6040;
+  margin-bottom: 1.5rem;
+}
+.empty-bird-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ede0cf;
+  border: 2px dashed #c8b89a;
+  margin: 0 auto 1rem;
+}
+#empty-state .btn-primary { margin-top: 1rem; }
+
+/* Edit habit: modal coloration and element sizing. */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.45);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+.modal-overlay:not([hidden]) {
+  display: flex;
+}
+.modal-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.modal-card h2      { margin-bottom: 0.6rem; }
+.modal-card details { margin-bottom: 0.6rem; }
+.modal-card summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #7a6040;
+}
+.modal-card pre {
+  background: #f5f0e8;
+  border: 1px solid #c8b89a;
+  border-radius: 6px;
+  padding: 0.8rem;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin-top: 0.4rem;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+/* Add habit: page layout and element coloration. */
+
+.page-add-habit {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+#add-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #fff;
+  border-bottom: 2px solid #c8b89a;
+  padding: 0.4rem 1.5rem;
+}
+.nav-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #2d5a27;
+}
+.form-card {
+  background: #fff;
+  border: 1px solid #c8b89a;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 560px;
+  width: calc(100% - 3rem);
+}
+.confirm-modal {
+  background-color: #f5f0c8;
+  border: 1px solid #c8b040;
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  margin: 0 auto 1.5rem;
+  max-width: 560px;
+  width: calc(100% - 3rem);
+}
+.confirm-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}

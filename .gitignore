@@ -1,0 +1,56 @@
+Working on this over the past two weeks, it got much more complicated than I expected and ended
+up using elements of every coding class I've taken thus far, though I'm proud of it.
+
+I've included the three features described in my Assignment #2 submission. 
+
+Adding a Habit: As a user, I want to enter a new habit name and frequency so that I can begin tracking a new routine.
+
+Onboarding: As a user, I want a step-by-step setup guide so that I am guided through my first goal creation without confusion.
+
+Dashboard: As a user, I want to see a list of my habits so that I can assess my daily progress at a glance.
+
+IH#1 — Explain the Benefits of Using New and Existing Features
+The landing page explicitly lists what the app offers before the user commits to anything — minimalist 
+interface, daily check-ins, progress visualization, and local data storage. The onboarding Step 1 also 
+lists exactly what the user will accomplish in the next 60 seconds. Abi and Pat can assess value immediately; 
+Tim can see the "Coming Soon" sidebar to find what's new and interesting.
+
+IH#2 — Explain the Costs of Using New and Existing Features
+The onboarding tells the user upfront that setup takes 60 seconds. The landing page clarifies that data 
+is saved locally and never shared, addressing privacy concerns before they arise. Abi and Pat can make 
+an informed decision before investing any time.
+
+IH#3 — Let Users Gather as Much Information as They Want, and No More Than They Want
+The onboarding Step 1 sidebar showing "New Features" and "Coming Soon" is optional — Tim can read it, Abi 
+and Pat can ignore it and just click Next. The edit modal's "View raw data" collapsible works the same way — 
+power users can expand it, casual users never need to.
+
+IH#4 — Keep Familiar Features Available
+The dashboard uses universally recognized conventions — a + button to add, a chevron (›) to open details, 
+and a progress bar for completion status. These patterns are consistent with iOS, Android, and popular 
+productivity apps like Apple Reminders. The delete button, though greyed out in Sprint 1, is placed where 
+users would expect it.
+
+IH#5 — Make Undo/Redo and Backtracking Available
+When a user clicks Back on the Add Habit form after typing a name, a confirmation panel appears warning 
+them they may lose unsaved work. They can either confirm and leave or return to the form. This gives Abi 
+and Pat confidence that accidental navigation won't destroy their work, and gives Tim a safety net when exploring.
+
+IH#6 — Provide an Explicit Path through the Task
+The three-step onboarding with a labeled progress bar ("Step 2 of 3"), a filling pill at the bottom, 
+and clear Next/Back buttons gives Abi a structured, unambiguous path through first-time setup. Tim and 
+Pat can skip onboarding on return visits since localStorage remembers completion and sends them directly 
+to the dashboard.
+
+IH#7 — Provide Ways to Try Out Different Approaches
+There are three separate ways to add a new habit — the + Add button in the nav bar, the empty state button 
+when no habits exist, and the Add Habit page reachable from onboarding. This means Abi who follows the 
+explicit path, Pat who explores a bit, and Tim who clicks wherever they want will all find a way to the 
+same action.
+
+IH#8 — Encourage Tinkerers to Tinker Mindfully
+Required fields are marked with a red asterisk before the user attempts to submit. If they try to save without 
+a name, a red error message appears immediately and blocks the save — preventing bad data from being created. 
+The back-out confirmation modal adds a second checkpoint before data is discarded. The "Custom" option on frequency 
+and duration lets Tim enter freeform values, but the field is clearly labeled and bounded so they understand the scope 
+of what they're entering.

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "97f17d08-e777-41cb-9216-499a4e2fe5c3",
+    "name": "Brush teeth",
+    "frequency": "daily",
+    "duration": "1 month",
+    "done": false
+  },
+  {
+    "id": "39e1c544-0739-4465-927b-bcabf9f82050",
+    "name": "Tie shoes",
+    "frequency": "daily",
+    "duration": "1 week",
+    "done": false
+  },
+  {
+    "id": "2ca165c1-eb40-4af3-ac96-b99363e41ea3",
+    "name": "Brush hair",
+    "frequency": "three times a day",
+    "duration": "1 week",
+    "done": false
+  }
+]
