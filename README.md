@@ -2,7 +2,6 @@
 
 Habit-at is a habit-tracking web application built for Sprint 1 of the CS361 Software Engineering course at Oregon State University. 
 The app allows users to create habits, track progress, and view them on a unified dashboard.
-
 ## Stack
 
 - **Backend:** Python / Flask; REST API, data stored in a local JSON file
