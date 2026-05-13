@@ -1,0 +1,16 @@
+[
+  {
+    "id": "b5ee9d4c-9643-4b20-86dd-9fd966b4aa12",
+    "name": "Brush Hair",
+    "frequency": "Twice a week",
+    "duration": "1 month",
+    "done": false
+  },
+  {
+    "id": "ce7fbab2-04b2-4a83-969d-43e69b637eb4",
+    "name": "Drink Water",
+    "frequency": "daily",
+    "duration": "1 month",
+    "done": false
+  }
+]
