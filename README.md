@@ -8,8 +8,9 @@ The app allows users to create habits, track progress, and view them on a unifie
 - **Frontend:** Plain HTML, CSS, and JavaScript
 - **Server:** Node.js; serves frontend pages and proxies API requests to Flask
 
-## Adding a New Habit during Onboarding
-![Habit-at Onboarding](habitat-add.png)
+## Current Version Demo Video
+
+![Version 1.0 Demo](https://github.com/user-attachments/assets/9d800e17-a529-4947-bc01-6b0fc6175d26)
 
 ## Features (Sprint 1)
 
