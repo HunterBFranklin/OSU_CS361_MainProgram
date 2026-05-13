@@ -10,7 +10,7 @@ The app allows users to create habits, track progress, and view them on a unifie
 
 ## Current Version Demo Video
 
-![Demo Video](assets/v1.0-demo.mp4)
+<video src="assets/v1.0-demo.mp4" controls width="600"></video>
 
 ## Features (Sprint 1)
 
