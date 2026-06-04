@@ -1,9 +1,7 @@
 /* Hunter B. Franklin
 CS361-400, Spring 2026
-
-Assignment #5: Main Program Implementation
-State: Sprint #1 implemented
-Due: 05/04/2026 */
+Assignment #9: Main Program, Big Pool Implementation
+Date: 06/03/2026 */
 
 /* Color palette from the paper prototype:
      #2d5a27  dark green
@@ -604,3 +602,73 @@ progress::-moz-progress-bar      { background-color: #7a6040; border-radius: 8px
   gap: 0.8rem;
   margin-top: 1rem;
 }
+/* Microservice badges on habit cards. */
+
+.habit-card-top-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.badge-overdue {
+  background-color: #9b3a3a;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  letter-spacing: 0.05em;
+}
+.habit-microservice-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  opacity: 0.92;
+}
+.badge-streak {
+  font-size: 0.82rem;
+  font-weight: bold;
+}
+.badge-nextdue {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+.badge-status {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.1rem 0.5rem;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.2);
+}
+.status-on-track  { background-color: #2d5a27; color: #fff; }
+.status-behind    { background-color: #9b3a3a; color: #fff; }
+.status-complete  { background-color: #5a3e28; color: #fff; }
+
+/* Complete and Delete buttons (now active). */
+
+.btn-complete {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-complete:hover     { background: rgba(255,255,255,0.3); }
+.btn-complete-done      { opacity: 0.5; cursor: not-allowed; }
+.btn-delete {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-delete:hover { background-color: rgba(155,58,58,0.5); }

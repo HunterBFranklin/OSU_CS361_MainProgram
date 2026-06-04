@@ -1,16 +1,54 @@
 [
   {
-    "id": "b5ee9d4c-9643-4b20-86dd-9fd966b4aa12",
-    "name": "Brush Hair",
-    "frequency": "Twice a week",
-    "duration": "1 month",
-    "done": false
+    "id": "0f1184db-94fc-48f9-81e7-32e6f567fbc5",
+    "name": "Print paper",
+    "frequency": "hourly",
+    "duration": "1 week",
+    "start_date": "2026-06-03",
+    "completions": [
+      {
+        "timestamp": "2026-06-03T12:00:00.000Z"
+      }
+    ],
+    "done": true
   },
   {
-    "id": "ce7fbab2-04b2-4a83-969d-43e69b637eb4",
+    "id": "f15d2599-cc00-462e-a85d-f65e4dfb8a05",
+    "name": "Brush Hair",
+    "frequency": "hourly",
+    "duration": "1 week",
+    "start_date": "2026-06-03",
+    "completions": [
+      {
+        "timestamp": "2026-06-03T12:00:00.000Z"
+      }
+    ],
+    "done": true
+  },
+  {
+    "id": "98811173-46cc-45e1-8c5c-6803d86decb7",
     "name": "Drink Water",
-    "frequency": "daily",
-    "duration": "1 month",
-    "done": false
+    "frequency": "hourly",
+    "duration": "1 week",
+    "start_date": "2026-06-03",
+    "completions": [
+      {
+        "timestamp": "2026-06-03T12:00:00.000Z"
+      }
+    ],
+    "done": true
+  },
+  {
+    "id": "d25eff42-a559-42d0-8efe-a15622b37f7b",
+    "name": "Tie Shoes",
+    "frequency": "hourly",
+    "duration": "1 week",
+    "start_date": "2026-06-03",
+    "completions": [
+      {
+        "timestamp": "2026-06-03T12:00:00.000Z"
+      }
+    ],
+    "done": true
   }
 ]

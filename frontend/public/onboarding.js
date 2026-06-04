@@ -1,10 +1,7 @@
 // Hunter B. Franklin
 // CS361-400, Spring 2026
-
-// Assignment #5: Main Program Implementation
-// State: Sprint #1 implemented
-// Due: 05/04/2026
-
+// Assignment #9: Main Program, Big Pool Implementation
+// Date: 06/03/2026
 // Step initialization.
 let currentStep = 1;
 

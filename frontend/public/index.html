@@ -1,11 +1,8 @@
 <!-- Hunter B. Franklin
 CS361-400, Spring 2026
+Assignment #9: Main Program, Big Pool Implementation
+Date: 06/03/2026 -->
 
-Assignment #5: Main Program Implementation
-State: Sprint #1 implemented
-Due: 05/04/2026 -->
-
-<!-- HTML setup: -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,12 +14,10 @@ Due: 05/04/2026 -->
 
   <div id="landing-page">
 
-    <!-- Logo: -->
     <div id="landing-logo">
       <img src="habitat_logo.png" alt="Habit-at logo" class="logo-img" />
     </div>
 
-    <!-- App description: -->
     <div id="landing-info">
       <p><strong>Let us introduce ourselves:</strong></p>
       <p>
@@ -35,10 +30,10 @@ Due: 05/04/2026 -->
         streak counts, and simple progress visualization. Most importantly,
         your data is saved locally and never shared.
       </p>
-      <p class="landing-quote">"We are a product of what we repeatedly do."</p>
+      <!-- Quote populated by random-quote-generator microservice on load. -->
+      <p class="landing-quote" id="landing-quote">"We are a product of what we repeatedly do."</p>
     </div>
 
-    <!-- Action buttons (currently login is a placeholder for microservice): -->
     <div id="landing-actions">
       <button class="btn-disabled btn-large" disabled>
         Log In &rsaquo; (Coming Sprint 2)
@@ -49,6 +44,21 @@ Due: 05/04/2026 -->
     </div>
 
   </div>
+
+  <script>
+    // Fetch a motivational quote from the quote generator on page load.
+    window.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res  = await fetch("/api/quote");
+        const data = await res.json();
+        const el   = document.getElementById("landing-quote");
+        if (el && data.quote) {
+          const author = data.author ? ` — ${data.author}` : "";
+          el.textContent = `"${data.quote}"${author}`;
+        }
+      } catch (e) { /* keep fallback text if service is down */ }
+    });
+  </script>
 
 </body>
 </html>
