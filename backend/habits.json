@@ -1,54 +1,52 @@
 [
   {
-    "id": "0f1184db-94fc-48f9-81e7-32e6f567fbc5",
-    "name": "Print paper",
-    "frequency": "hourly",
-    "duration": "1 week",
-    "start_date": "2026-06-03",
-    "completions": [
-      {
-        "timestamp": "2026-06-03T12:00:00.000Z"
-      }
-    ],
-    "done": true
+    "id": "06c68377-2ebb-4a6d-963f-c5d840e8b5fc",
+    "name": "Complete CS361 Assignment",
+    "category": "Learning",
+    "frequency": "weekly",
+    "duration": "1 month",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
   },
   {
-    "id": "f15d2599-cc00-462e-a85d-f65e4dfb8a05",
-    "name": "Brush Hair",
-    "frequency": "hourly",
+    "id": "a123c2d0-7143-4f6f-9e7e-40aa3d45e50a",
+    "name": "Complete Chest & Back Workout",
+    "category": "Fitness",
+    "frequency": "daily",
     "duration": "1 week",
-    "start_date": "2026-06-03",
-    "completions": [
-      {
-        "timestamp": "2026-06-03T12:00:00.000Z"
-      }
-    ],
-    "done": true
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
   },
   {
-    "id": "98811173-46cc-45e1-8c5c-6803d86decb7",
-    "name": "Drink Water",
-    "frequency": "hourly",
-    "duration": "1 week",
-    "start_date": "2026-06-03",
-    "completions": [
-      {
-        "timestamp": "2026-06-03T12:00:00.000Z"
-      }
-    ],
-    "done": true
+    "id": "e1146f86-e78c-44ee-b727-1a4b765ddbd0",
+    "name": "Brush & Floss My Teeth",
+    "category": "Health",
+    "frequency": "daily",
+    "duration": "1 year",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
   },
   {
-    "id": "d25eff42-a559-42d0-8efe-a15622b37f7b",
-    "name": "Tie Shoes",
-    "frequency": "hourly",
+    "id": "b036fa3e-d297-4d30-b6ab-a5a21446eae1",
+    "name": "Meditate (once a day)",
+    "category": "Mindfulness",
+    "frequency": "daily",
     "duration": "1 week",
-    "start_date": "2026-06-03",
-    "completions": [
-      {
-        "timestamp": "2026-06-03T12:00:00.000Z"
-      }
-    ],
-    "done": true
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
+  },
+  {
+    "id": "1a47ebd8-1b65-4985-971e-43f4613c6d4e",
+    "name": "Hang out with friends",
+    "category": "Social",
+    "frequency": "weekly",
+    "duration": "1 year",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
   }
 ]

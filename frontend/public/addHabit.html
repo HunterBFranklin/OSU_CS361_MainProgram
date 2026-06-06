@@ -26,27 +26,19 @@ Date: 06/03/2026 -->
     <label for="add-name">Habit Name: <span class="required">*</span></label>
     <input id="add-name" type="text" placeholder="e.g. Brush Teeth" />
 
-    <!-- Button to show 'to be implemented' Categories -->
-    <label class="label-disabled">Category: (Coming Sprint 2)</label>
-    <select id="add-category" disabled class="input-disabled">
-      <option value="">-- Not yet available --</option>
-    </select>
-    
-    <!-- To be implemented: -->
-    <!-- Category Buttons (including Custom): -->
-    <!-- <label for="add-category">Category: <span class="required">*</span></label>
+    <!-- Category dropdown: -->
+    <label for="add-category">Category: <span class="required">*</span></label>
     <select id="add-category">
       <option value="">-- Select --</option>
-      <option>Health</option>
-      <option>Fitness</option>
-      <option>Mindfulness</option>
-      <option>Productivity</option>
-      <option>Social</option>
-      <option>Personal</option>
-      <option>Learning</option>
-      <option>Other</option>
-    </select> -->
-   
+      <option value="Health">Health</option>
+      <option value="Fitness">Fitness</option>
+      <option value="Mindfulness">Mindfulness</option>
+      <option value="Productivity">Productivity</option>
+      <option value="Social">Social</option>
+      <option value="Personal">Personal</option>
+      <option value="Learning">Learning</option>
+      <option value="Other">Other</option>
+    </select>
 
     <!-- Frequency buttons: -->
     <p class="field-label">Goal Frequency:</p>
@@ -79,16 +71,15 @@ Date: 06/03/2026 -->
 
   </div>
 
-  <!-- To be implemented: -->
-  <!-- Back-out Confirmation Modals: -->
-  <!-- <div id="back-confirm" class="confirm-modal" hidden>
+  <!-- Back-out Confirmation Modal: -->
+  <div id="back-confirm" class="confirm-modal" hidden>
     <p><strong>Are you sure you want to go back?</strong></p>
     <p>You may lose your unsaved habit.</p>
     <div class="confirm-buttons">
       <button class="btn-danger" onclick="confirmGoBack()">Yes, go back</button>
       <button class="btn-primary" onclick="cancelGoBack()">No, return to Habit</button>
     </div>
-  </div> -->
+  </div>
 
   <script src="addHabit.js"></script>
 </body>

@@ -17,11 +17,43 @@ Date: 06/03/2026 -->
     <div class="nav-logo">
       <img src="habitat_logo.png" alt="Habit-at logo" class="logo-img logo-small" />
     </div>
-    <span id="today-date"></span>
     <div class="nav-actions">
+      <!-- Trash can: opens deleted habits panel -->
+      <button class="btn-icon" id="btn-trash" onclick="toggleTrash()" title="Deleted Habits">🗑️</button>
+      <!-- Help: hover to label each icon -->
+      <button class="btn-icon" id="btn-help" onclick="toggleTooltips()" title="Help">?</button>
       <button class="btn-primary" onclick="window.location.href='addHabit.html'">+ Add</button>
     </div>
   </nav>
+
+  <!-- Centered date header: -->
+  <div id="dashboard-date-header">
+    <span id="today-date"></span>
+  </div>
+
+  <!-- Real-time search bar: -->
+  <div id="search-bar-wrapper">
+    <input
+      id="habit-search"
+      type="text"
+      placeholder="🔍  Search habits…"
+      oninput="filterHabits(this.value)"
+      autocomplete="off"
+    />
+  </div>
+
+  <!-- Category filter tabs: -->
+  <div id="category-filter">
+    <button class="cat-btn active" data-cat="All" onclick="selectCategory(this)">All</button>
+    <button class="cat-btn" data-cat="Health" onclick="selectCategory(this)">Health</button>
+    <button class="cat-btn" data-cat="Fitness" onclick="selectCategory(this)">Fitness</button>
+    <button class="cat-btn" data-cat="Mindfulness" onclick="selectCategory(this)">Mindfulness</button>
+    <button class="cat-btn" data-cat="Productivity" onclick="selectCategory(this)">Productivity</button>
+    <button class="cat-btn" data-cat="Social" onclick="selectCategory(this)">Social</button>
+    <button class="cat-btn" data-cat="Personal" onclick="selectCategory(this)">Personal</button>
+    <button class="cat-btn" data-cat="Learning" onclick="selectCategory(this)">Learning</button>
+    <button class="cat-btn" data-cat="Other" onclick="selectCategory(this)">Other</button>
+  </div>
 
   <!-- Daily completion bar: -->
   <div id="daily-summary">
@@ -57,6 +89,18 @@ Date: 06/03/2026 -->
       <input type="hidden" id="modal-id" />
       <label for="modal-name">Habit Name: <span class="required">*</span></label>
       <input id="modal-name" type="text" />
+      <label for="modal-category">Category:</label>
+      <select id="modal-category">
+        <option value="">-- Select --</option>
+        <option value="Health">Health</option>
+        <option value="Fitness">Fitness</option>
+        <option value="Mindfulness">Mindfulness</option>
+        <option value="Productivity">Productivity</option>
+        <option value="Social">Social</option>
+        <option value="Personal">Personal</option>
+        <option value="Learning">Learning</option>
+        <option value="Other">Other</option>
+      </select>
       <label for="modal-frequency">Frequency:</label>
       <select id="modal-frequency" onchange="toggleCustomFreq()">
         <option value="hourly">Hourly</option>
@@ -81,6 +125,41 @@ Date: 06/03/2026 -->
         <button class="btn-primary" onclick="saveEditModal()">Save Changes</button>
       </div>
     </div>
+  </div>
+
+  <!-- Delete confirmation modal: -->
+  <div id="delete-modal-overlay" class="modal-overlay" hidden>
+    <div class="modal-card modal-card-sm">
+      <h2>Delete Habit?</h2>
+      <p id="delete-modal-name"></p>
+      <p class="delete-modal-sub">This habit will be moved to trash. You can restore it from there.</p>
+      <div class="modal-buttons">
+        <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trash panel (deleted habits side drawer): -->
+  <div id="trash-panel" hidden>
+    <div id="trash-panel-inner">
+      <div id="trash-panel-header">
+        <span>🗑️ Deleted Habits</span>
+        <button class="btn-icon" onclick="toggleTrash()">✕</button>
+      </div>
+      <ul id="trash-list"></ul>
+      <p id="trash-empty" hidden>No deleted habits.</p>
+    </div>
+  </div>
+
+  <!-- Tooltip overlay: shown when ? is hovered, labels each icon -->
+  <div id="tooltip-overlay" hidden>
+    <div class="tooltip-item">✓ Complete — Mark today's habit as done</div>
+    <div class="tooltip-item">Delete — Move this habit to trash</div>
+    <div class="tooltip-item">› — Edit habit name, frequency &amp; category</div>
+    <div class="tooltip-item">+ Add — Create a new habit</div>
+    <div class="tooltip-item">🔍 Search — Filter habits by name in real time</div>
+    <div class="tooltip-item">🗑️ — View &amp; restore deleted habits</div>
   </div>
 
   <script src="dashboard.js"></script>

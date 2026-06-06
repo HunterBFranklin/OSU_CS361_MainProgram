@@ -39,9 +39,6 @@ Date: 06/03/2026 -->
         <ul>
           <li>Add habits with custom frequencies and durations</li>
           <li>View all habits in one unified Dashboard</li>
-        </ul>
-        <p><strong>Coming soon:</strong></p>
-        <ul>
           <li>Streaks for Habits</li>
           <li>Marking Habits complete</li>
           <li>Search Habits</li>
@@ -59,23 +56,19 @@ Date: 06/03/2026 -->
       <label for="ob-name">Habit Name: <span class="required">*</span></label>
       <input id="ob-name" type="text" placeholder="e.g. Drink Water" />
 
-      <!-- Category (to be implemented): -->
-      <label class="label-disabled">Category: (Coming Sprint 2)</label>
-      <select id="ob-category" disabled class="input-disabled">
-        <option value="">-- Not yet available --</option>
-      </select>
-      <!--
+      <!-- Category dropdown (Sprint 2 — now active): -->
       <label for="ob-category">Category: <span class="required">*</span></label>
       <select id="ob-category">
         <option value="">-- Select --</option>
-        <option>Health</option>
-        <option>Fitness</option>
-        <option>Mindfulness</option>
-        <option>Productivity</option>
-        <option>Learning</option>
-        <option>Other</option>
+        <option value="Health">Health</option>
+        <option value="Fitness">Fitness</option>
+        <option value="Mindfulness">Mindfulness</option>
+        <option value="Productivity">Productivity</option>
+        <option value="Social">Social</option>
+        <option value="Personal">Personal</option>
+        <option value="Learning">Learning</option>
+        <option value="Other">Other</option>
       </select>
-      -->
 
       <!-- Frequency buttons: -->
       <p class="field-label">Goal Frequency:</p>

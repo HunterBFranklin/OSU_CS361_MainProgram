@@ -81,7 +81,7 @@ const server = http.createServer((req, res) => {
   // /habits routes go to Flask (habit CRUD).
   // /api/* routes go to Flask (microservice proxies for quote, streak, schedule, progress).
   // Everything else is served as a static file from /public.
-  if (req.url.startsWith("/habits") || req.url.startsWith("/api")) {
+  if (req.url.startsWith("/habits") || req.url.startsWith("/api") || req.url.startsWith("/deleted_habits")) {
     proxyToFlask(req, res);
   } else {
     serveStatic(req, res);

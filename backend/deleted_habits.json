@@ -1,0 +1,84 @@
+[
+  {
+    "id": "2ef70d8c-1b8e-4cbd-98be-8005bae1c6f1",
+    "name": "Go for a run",
+    "category": "Health",
+    "frequency": "hourly",
+    "duration": "1 week",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
+  },
+  {
+    "id": "b4cb3c36-32f1-484f-8d5c-a91b4d8f1b9b",
+    "name": "Talk to someone new",
+    "category": "Personal",
+    "frequency": "daily",
+    "duration": "1 month",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
+  },
+  {
+    "id": "e1c3ecc6-3a09-41c7-a52e-26e663097aee",
+    "name": "Talk to someone new",
+    "category": "Social",
+    "frequency": "daily",
+    "duration": "1 month",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
+  },
+  {
+    "id": "d9cb5058-af8c-4a2d-877c-d14740d66f51",
+    "name": "Chest and Back Workout",
+    "category": "Fitness",
+    "frequency": "daily",
+    "duration": "1 week",
+    "start_date": "2026-06-05",
+    "completions": [
+      {
+        "timestamp": "2026-06-05T12:00:00.000Z"
+      }
+    ],
+    "done": true
+  },
+  {
+    "id": "12054133-96b5-44b1-bc8e-b0a84bc24a55",
+    "name": "Talk to someone new",
+    "category": "Mindfulness",
+    "frequency": "hourly",
+    "duration": "1 week",
+    "start_date": "2026-06-05",
+    "completions": [],
+    "done": false
+  },
+  {
+    "id": "a6459bf8-d260-4a5b-8922-1648e80cccb6",
+    "name": "Go for a run",
+    "category": "Health",
+    "frequency": "daily",
+    "duration": "1 week",
+    "start_date": "2026-06-05",
+    "completions": [
+      {
+        "timestamp": "2026-06-05T12:00:00.000Z"
+      }
+    ],
+    "done": true
+  },
+  {
+    "id": "74687236-3ee0-467e-92f2-d4be033dfc5d",
+    "name": "Chest and Back Workout",
+    "category": "Fitness",
+    "frequency": "daily",
+    "duration": "1 week",
+    "start_date": "2026-06-05",
+    "completions": [
+      {
+        "timestamp": "2026-06-05T12:00:00.000Z"
+      }
+    ],
+    "done": true
+  }
+]

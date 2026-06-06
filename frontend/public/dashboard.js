@@ -20,11 +20,17 @@ function getGoalTotal(frequency, duration) {
   return parseInt(duration) || 30;
 }
 
-// Dashboard load and render all habits.
-// Also kicks off one async microservice fetch per habit card after the list renders.
+// Module-level state: persists across renderHabits() calls without re-fetching.
+let allHabits         = [];   // Full habit list from the server.
+let activeCategory    = "All"; // Currently selected category filter tab.
+let searchQuery       = "";    // Live search string from the search bar.
+let pendingDeleteId   = null;  // Habit id waiting in the delete confirmation modal.
+let pendingDeleteName = "";    // Habit name shown in the delete modal.
+
+// Dashboard load: fetches habits and kicks off microservice calls per card.
 async function loadDashboard() {
   document.getElementById("today-date").textContent = new Date().toLocaleDateString("en-US", {
-    month: "long", day: "numeric", year: "numeric"
+    weekday: "long", month: "long", day: "numeric", year: "numeric"
   });
 
   // Fetch a live motivational quote from random-quote-generator (via Flask proxy).
@@ -40,8 +46,15 @@ async function loadDashboard() {
   } catch (e) { /* Keep placeholder text if the service is down. */ }
 
   const response = await fetch("/habits");
-  const habits   = await response.json();
+  allHabits = await response.json();
 
+  renderHabits();
+}
+
+// Renders only the cards that match the active category + search query.
+// Called by loadDashboard(), filterHabits(), and selectCategory() so all three
+// paths go through the same logic without re-fetching from the server.
+function renderHabits() {
   const list    = document.getElementById("habit-list");
   const emptyEl = document.getElementById("empty-state");
   const bar     = document.getElementById("daily-bar");
@@ -49,19 +62,49 @@ async function loadDashboard() {
 
   list.innerHTML = "";
 
-  if (habits.length === 0) {
-    emptyEl.hidden = false;
-    list.hidden    = true;
-    return;
-  } else {
-    emptyEl.hidden = true;
-    list.hidden    = false;
+  // Filter by category first, then narrow by search query.
+  let visible = allHabits;
+  if (activeCategory !== "All") {
+    visible = visible.filter(h => (h.category || "Other") === activeCategory);
+  }
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    visible = visible.filter(h => h.name.toLowerCase().includes(q));
   }
 
-  // Track how many habits were completed today for the daily progress bar.
-  let completedToday = 0;
+  if (allHabits.length === 0) {
+    emptyEl.hidden = false;
+    list.hidden    = true;
+    bar.max   = 1;
+    bar.value = 0;
+    countEl.textContent = "0 of 0";
+    return;
+  }
 
-  habits.forEach(habit => {
+  emptyEl.hidden = true;
+  list.hidden    = false;
+
+  // Daily progress counts the full unfiltered list so the bar stays accurate.
+  const now   = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  let completedToday = 0;
+  allHabits.forEach(h => {
+    if ((h.completions || []).some(c => c.timestamp.startsWith(today))) completedToday++;
+  });
+  bar.max   = allHabits.length;
+  bar.value = completedToday;
+  countEl.textContent = `${completedToday} of ${allHabits.length}`;
+
+  // Soft "no results" message when search/filter produces an empty visible set.
+  if (visible.length === 0) {
+    const li = document.createElement("li");
+    li.className   = "no-results";
+    li.textContent = "No habits match your search.";
+    list.appendChild(li);
+    return;
+  }
+
+  visible.forEach(habit => {
     const li = document.createElement("li");
     li.className  = "habit-card";
     li.dataset.id = habit.id;
@@ -69,12 +112,11 @@ async function loadDashboard() {
     // Calculation for goal.
     const goalTotal   = getGoalTotal(habit.frequency, habit.duration);
     const currentProg = (habit.completions || []).length;
+    const percent     = goalTotal > 0 ? Math.round((currentProg / goalTotal) * 100) : 0;
 
     // Check if already completed today using local date (avoids UTC offset mismatches).
-    const now       = new Date();
-    const today     = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const doneToday = (habit.completions || []).some(c => c.timestamp.startsWith(today));
-    if (doneToday) completedToday++;
+    const categoryLabel = habit.category || "";
 
     // Habit card HTML. Microservice fields (streak, next due, overdue, status)
     // start with placeholder values and are populated asynchronously below.
@@ -84,7 +126,7 @@ async function loadDashboard() {
           <span class="habit-name">${habit.name}</span>
           <span class="badge-overdue" id="overdue-${habit.id}" hidden>OVERDUE</span>
         </div>
-        <span class="habit-meta">${habit.frequency} &bull; ${habit.duration}</span>
+        <span class="habit-meta">${habit.frequency} &bull; ${habit.duration}${categoryLabel ? " &bull; " + categoryLabel : ""}</span>
         <div class="habit-microservice-row">
           <span class="badge-streak"  id="streak-${habit.id}">🔥 —</span>
           <span class="badge-nextdue" id="nextdue-${habit.id}">Next due: —</span>
@@ -92,15 +134,17 @@ async function loadDashboard() {
         </div>
         <div class="habit-progress-row">
           <progress class="habit-progress-bar" id="progress-bar-${habit.id}" value="${currentProg}" max="${goalTotal}"></progress>
-          <span class="habit-progress-label" id="progress-label-${habit.id}">${currentProg} of ${goalTotal}</span>
+          <span class="habit-progress-label" id="progress-label-${habit.id}">${currentProg} of ${goalTotal} (${percent}%)</span>
         </div>
       </div>
       <div class="habit-card-actions">
         <button class="btn-complete ${doneToday ? "btn-complete-done" : ""}"
+          id="btn-complete-${habit.id}"
           onclick="markDone('${habit.id}')" ${doneToday ? "disabled" : ""}>
           ${doneToday ? "✓ Done" : "✓ Complete"}
         </button>
-        <button class="btn-delete" onclick="deleteHabit('${habit.id}')">Delete</button>
+        ${doneToday ? `<button class="btn-undo-complete" onclick="undoComplete('${habit.id}')">Undo</button>` : ""}
+        <button class="btn-delete" onclick="openDeleteModal('${habit.id}', '${habit.name.replace(/'/g, "\\'")}')">Delete</button>
       </div>
       <span class="chevron" onclick="event.stopPropagation(); openEditModal('${habit.id}')">&rsaquo;</span>
     `;
@@ -113,10 +157,20 @@ async function loadDashboard() {
     fetchScheduleData(habit.id);
     fetchProgressData(habit.id, goalTotal);
   });
+}
 
-  bar.max   = habits.length;
-  bar.value = completedToday;
-  countEl.textContent = `${completedToday} of ${habits.length}`;
+// Called by oninput on the search bar — updates query state and re-renders.
+function filterHabits(value) {
+  searchQuery = value;
+  renderHabits();
+}
+
+// Called when a category tab is clicked — updates active tab and re-renders.
+function selectCategory(btn) {
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  activeCategory = btn.dataset.cat;
+  renderHabits();
 }
 
 // Fetches streak metrics from streak-calculator (via Flask /api/habits/:id/streak).
@@ -157,7 +211,7 @@ async function fetchScheduleData(habitId) {
 
 // Fetches percent complete, status label, and projected completion date from
 // progress-calculator (via Flask /api/habits/:id/progress).
-// Updates the progress bar, count label, and status badge on the card.
+// Updates the progress bar, count label (X of Y (Z%)), and status badge on the card.
 async function fetchProgressData(habitId, goalTotal) {
   try {
     const res  = await fetch(`/api/habits/${habitId}/progress`, { method: "POST" });
@@ -167,8 +221,9 @@ async function fetchProgressData(habitId, goalTotal) {
     const labelEl  = document.getElementById(`progress-label-${habitId}`);
     const statusEl = document.getElementById(`status-${habitId}`);
 
+    const pct = data.percent_complete != null ? Math.round(data.percent_complete) : 0;
     if (barEl)   { barEl.max = data.target || goalTotal; barEl.value = data.current || 0; }
-    if (labelEl)  labelEl.textContent = `${data.current || 0} of ${data.target || goalTotal}`;
+    if (labelEl)  labelEl.textContent = `${data.current || 0} of ${data.target || goalTotal} (${pct}%)`;
     if (statusEl) {
       statusEl.textContent = data.status || "—";
       // Apply the correct color class based on status ("on track", "behind", "complete").
@@ -184,13 +239,117 @@ async function markDone(habitId) {
   loadDashboard();
 }
 
-// Deletes a habit and reloads the dashboard.
-async function deleteHabit(habitId) {
-  await fetch(`/habits/${habitId}`, { method: "DELETE" });
+// Removes today's completion only — will not roll back any earlier entries.
+async function undoComplete(habitId) {
+  const res = await fetch(`/habits/${habitId}/undo_done`, { method: "PATCH" });
+  if (res.ok) loadDashboard();
+}
+
+// Delete confirmation modal:
+
+function openDeleteModal(habitId, habitName) {
+  pendingDeleteId   = habitId;
+  pendingDeleteName = habitName;
+  document.getElementById("delete-modal-name").textContent = `"${habitName}"`;
+  document.getElementById("delete-modal-overlay").hidden = false;
+}
+
+function closeDeleteModal() {
+  document.getElementById("delete-modal-overlay").hidden = true;
+  pendingDeleteId = null;
+}
+
+// Moves the habit to deleted_habits.json on the backend, then starts the
+async function confirmDelete() {
+  if (!pendingDeleteId) return;
+  const id = pendingDeleteId;
+  closeDeleteModal();
+  await fetch(`/habits/${id}`, { method: "DELETE" });
   loadDashboard();
 }
 
-// Edit modal full functionality.
+// Undo delete toast:
+
+function startUndoTimer(habitName) {
+  clearInterval(undoTimer);
+  undoSecondsLeft = 20;
+
+  const toast       = document.getElementById("undo-toast");
+  const msgEl       = document.getElementById("undo-toast-msg");
+  const countdownEl = document.getElementById("undo-countdown");
+
+  msgEl.textContent       = `"${habitName}" deleted.`;
+  countdownEl.textContent = `${undoSecondsLeft}s`;
+  toast.hidden            = false;
+
+  undoTimer = setInterval(() => {
+    undoSecondsLeft--;
+    countdownEl.textContent = `${undoSecondsLeft}s`;
+    if (undoSecondsLeft <= 0) {
+      clearInterval(undoTimer);
+      toast.hidden = true;
+      undoDeleteId = null;
+    }
+  }, 1000);
+}
+
+// Restores the last deleted habit from deleted_habits.json within the 20s window.
+async function undoDelete() {
+  if (!undoDeleteId) return;
+  clearInterval(undoTimer);
+  document.getElementById("undo-toast").hidden = true;
+  await fetch(`/habits/${undoDeleteId}/restore`, { method: "POST" });
+  undoDeleteId = null;
+  loadDashboard();
+}
+
+// Trash panel:
+
+// Toggles the deleted habits side drawer open or closed.
+async function toggleTrash() {
+  const panel = document.getElementById("trash-panel");
+  if (!panel.hidden) {
+    panel.hidden = true;
+    return;
+  }
+  await refreshTrashPanel();
+  panel.hidden = false;
+}
+
+async function refreshTrashPanel() {
+  const res     = await fetch("/deleted_habits");
+  const deleted = await res.json();
+  const list    = document.getElementById("trash-list");
+  const emptyEl = document.getElementById("trash-empty");
+  list.innerHTML = "";
+
+  if (deleted.length === 0) {
+    emptyEl.hidden = false;
+    return;
+  }
+  emptyEl.hidden = true;
+
+  deleted.forEach(habit => {
+    const li = document.createElement("li");
+    li.className = "trash-item";
+    li.innerHTML = `
+      <span class="trash-item-name">${habit.name}</span>
+      <span class="trash-item-meta">${habit.category || ""} &bull; ${habit.frequency}</span>
+      <button class="btn-restore" onclick="restoreFromTrash('${habit.id}')">Restore</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+// Restores a habit from the trash panel back into the active habit list.
+async function restoreFromTrash(habitId) {
+  await fetch(`/habits/${habitId}/restore`, { method: "POST" });
+  await refreshTrashPanel();
+  loadDashboard();
+}
+
+// Edit modal:
+
 let habitCache = [];
 
 async function openEditModal(habitId) {
@@ -200,8 +359,9 @@ async function openEditModal(habitId) {
   const habit = habitCache.find(h => h.id === habitId);
   if (!habit) return;
 
-  document.getElementById("modal-id").value   = habit.id;
-  document.getElementById("modal-name").value = habit.name;
+  document.getElementById("modal-id").value        = habit.id;
+  document.getElementById("modal-name").value      = habit.name;
+  document.getElementById("modal-category").value  = habit.category || "";
 
   // Frequency: set dropdown, show custom input if needed.
   const freqSelect   = document.getElementById("modal-frequency");
@@ -268,9 +428,10 @@ function toggleCustomDuration() {
 
 // Edit modal saving and updating of the JSON file.
 async function saveEditModal() {
-  const id      = document.getElementById("modal-id").value;
-  const name    = document.getElementById("modal-name").value.trim();
-  const errorEl = document.getElementById("modal-error");
+  const id       = document.getElementById("modal-id").value;
+  const name     = document.getElementById("modal-name").value.trim();
+  const category = document.getElementById("modal-category").value;
+  const errorEl  = document.getElementById("modal-error");
 
   // Read frequency: custom text or dropdown value.
   const freqCustomEl = document.getElementById("modal-frequency-custom");
@@ -288,15 +449,15 @@ async function saveEditModal() {
     errorEl.textContent = "Habit name is required.";
     errorEl.hidden = false;
     return;
-  } // Error pop-up.
+  }
 
   errorEl.hidden = true;
 
-  // PUT request (category excluded currently) for Flask JSON:
+  // PUT request for Flask JSON:
   const response = await fetch("/habits/" + id, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, frequency, duration }),
+    body: JSON.stringify({ name, frequency, duration, category }),
   });
 
   if (response.ok) {
@@ -305,9 +466,27 @@ async function saveEditModal() {
   } else {
     const data = await response.json();
     errorEl.textContent = data.error || "Something went wrong.";
-    errorEl.hidden = false; // Similar to other behavior that has been commented.
+    errorEl.hidden = false;
   }
 }
+
+// Tooltip overlay:
+
+// Shows icon labels when the ? button is hovered.
+// Toggles icon label overlay on ? button click.
+// Toggles icon label overlay on ? button click. Closes when clicking outside.
+function toggleTooltips() {
+  const el = document.getElementById("tooltip-overlay");
+  el.hidden = !el.hidden;
+}
+
+document.addEventListener("click", function(e) {
+  const tooltip = document.getElementById("tooltip-overlay");
+  const helpBtn = document.getElementById("btn-help");
+  if (!tooltip.hidden && !tooltip.contains(e.target) && e.target !== helpBtn) {
+    tooltip.hidden = true;
+  }
+});
 
 // Runs page on load.
 window.onload = function () {

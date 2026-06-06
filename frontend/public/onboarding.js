@@ -2,6 +2,7 @@
 // CS361-400, Spring 2026
 // Assignment #9: Main Program, Big Pool Implementation
 // Date: 06/03/2026
+
 // Step initialization.
 let currentStep = 1;
 
@@ -52,6 +53,7 @@ function goBack() {
 // Saving the added habit in step 2 of onboarding.
 async function saveOnboardingHabit() {
   const name     = document.getElementById("ob-name").value.trim();
+  const category = document.getElementById("ob-category").value;
   const errorEl  = document.getElementById("ob-error");
 
   // Read frequency: custom text input or hidden pill value.
@@ -66,9 +68,6 @@ async function saveOnboardingHabit() {
     ? document.getElementById("ob-duration").value
     : durCustomEl.value.trim();
 
-  // To be implemented.
-  // const category = document.getElementById("ob-category").value;
-
   // Name validation.
   if (!name) {
     errorEl.textContent = "Please enter a habit name.";
@@ -76,12 +75,12 @@ async function saveOnboardingHabit() {
     return false;
   }
 
-  // To be implemented.
-  // if (!category) {
-  //   errorEl.textContent = "Please select a category.";
-  //   errorEl.hidden = false;
-  //   return false;
-  // }
+  // Category validation.
+  if (!category) {
+    errorEl.textContent = "Please select a category.";
+    errorEl.hidden = false;
+    return false;
+  }
 
   errorEl.hidden = true;
 
@@ -89,12 +88,7 @@ async function saveOnboardingHabit() {
   const response = await fetch("/habits", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name,
-      frequency,
-      duration,
-      // category,  // To be implemented.
-    }),
+    body: JSON.stringify({ name, frequency, duration, category }),
   });
 
   if (response.ok) {

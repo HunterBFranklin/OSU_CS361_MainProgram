@@ -26,8 +26,10 @@ from datetime import date
 app = Flask(__name__)
 CORS(app)
 
-# This file is created automatically the first time a habit is saved.
-DATA_FILE = "habits.json"
+# habits.json is created automatically the first time a habit is saved.
+# deleted_habits.json holds soft-deleted habits for the trash panel and undo toast.
+DATA_FILE    = "habits.json"
+DELETED_FILE = "deleted_habits.json"
 
 # Microservice base URLs (each runs in its own process on a separate port):
 PROGRESS_URL = "http://localhost:3006"  # progress-calculator
@@ -48,6 +50,18 @@ def write_habits(habits):
     # indent=2 makes the file human-readable with indentation.
     with open(DATA_FILE, "w") as f:
         json.dump(habits, f, indent=2)
+
+def read_deleted():
+    # If the trash file doesn't exist yet, return an empty list.
+    if not os.path.exists(DELETED_FILE):
+        return []
+    with open(DELETED_FILE, "r") as f:
+        return json.load(f)
+
+def write_deleted(deleted):
+    # Save the deleted habits list back to deleted_habits.json.
+    with open(DELETED_FILE, "w") as f:
+        json.dump(deleted, f, indent=2)
 
 def goal_total(frequency, duration):
     # Maps frequency + duration to expected completion count.
@@ -95,19 +109,19 @@ def add_habit():
     if not data.get("name") or data["name"].strip() == "":
         return jsonify({"error": "Habit name is required."}), 400
 
-    # Same check for category (to be implemented).
-    # if not data.get("category") or data["category"].strip() == "":
-    #     return jsonify({"error": "Category is required."}), 400
+    # Category validation: required now that the field is live.
+    if not data.get("category") or data["category"].strip() == "":
+        return jsonify({"error": "Category is required."}), 400
 
     # Build the new habit object:
     new_habit = {
-        "id":          str(uuid.uuid4()),         # Random unique ID so we can find it later.
+        "id":          str(uuid.uuid4()),        # Random unique ID so we can find it later.
         "name":        data["name"].strip(),
-        # "category":  data["category"].strip(),  # To be implemented.
+        "category":    data["category"].strip(), # Stored on every habit going forward.
         "frequency":   data.get("frequency", "daily"),
         "duration":    data.get("duration", "1 month"),
-        "start_date":  date.today().isoformat(),  # Set once on creation, used by progress-calculator.
-        "completions": [],                         # Timestamped history, used by all four microservices.
+        "start_date":  date.today().isoformat(), # Set once on creation, used by progress-calculator.
+        "completions": [],                        # Timestamped history, used by all four microservices.
         "done":        False,
     }
     habits = read_habits()
@@ -116,20 +130,51 @@ def add_habit():
     return jsonify(new_habit), 201
 
 # DELETE /habits/<habit_id>:
-# Called when the user clicks the Delete button on a habit card.
-# <habit_id> is pulled automatically from the URL by Flask.
+# Called when the user clicks Delete on a habit card.
+# Moves the habit to deleted_habits.json instead of permanently removing it,
+# so the trash panel and the 20-second undo timer can restore it.
 @app.route("/habits/<habit_id>", methods=["DELETE"])
 def delete_habit(habit_id):
-    habits = read_habits()
+    habits  = read_habits()
+    deleted = read_deleted()
 
-    # Rebuild the list keeping every habit EXCEPT the one with the matching id:
-    habits = [h for h in habits if h["id"] != habit_id]
+    # Find the habit being deleted.
+    target = next((h for h in habits if h["id"] == habit_id), None)
+    if target:
+        deleted.append(target)
+        write_deleted(deleted)
+        habits = [h for h in habits if h["id"] != habit_id]
+        write_habits(habits)
+
+    return jsonify({"message": "Moved to trash."})
+
+# POST /habits/<habit_id>/restore:
+# Called by the undo toast (within 20 seconds) or the trash panel restore button.
+# Moves the habit back from deleted_habits.json to habits.json.
+@app.route("/habits/<habit_id>/restore", methods=["POST"])
+def restore_habit(habit_id):
+    deleted = read_deleted()
+    habits  = read_habits()
+
+    target = next((h for h in deleted if h["id"] == habit_id), None)
+    if not target:
+        return jsonify({"error": "Habit not found in trash."}), 404
+
+    habits.append(target)
+    deleted = [h for h in deleted if h["id"] != habit_id]
     write_habits(habits)
-    return jsonify({"message": "Deleted."})
+    write_deleted(deleted)
+    return jsonify(target)
+
+# GET /deleted_habits:
+# Called by the trash panel on the dashboard to list all soft-deleted habits.
+@app.route("/deleted_habits", methods=["GET"])
+def get_deleted():
+    return jsonify(read_deleted())
 
 # PUT /habits/<habit_id>:
 # Called when the user edits a habit in the edit modal on the dashboard.
-# Updates name, frequency, and duration for the matching habit.
+# Updates name, frequency, duration, and category for the matching habit.
 @app.route("/habits/<habit_id>", methods=["PUT"])
 def update_habit(habit_id):
     data   = request.get_json()
@@ -143,6 +188,9 @@ def update_habit(habit_id):
             habit["name"]      = data["name"].strip()
             habit["frequency"] = data.get("frequency", habit["frequency"])
             habit["duration"]  = data.get("duration",  habit["duration"])
+            # Update category if provided; keep existing value if omitted.
+            if data.get("category"):
+                habit["category"] = data["category"].strip()
             write_habits(habits)
             return jsonify(habit)
 
@@ -165,6 +213,29 @@ def mark_done(habit_id):
             # Record the completion timestamp (noon UTC avoids date-boundary issues).
             habit["completions"].append({"timestamp": date.today().isoformat() + "T12:00:00.000Z"})
             habit["done"] = True
+            write_habits(habits)
+            return jsonify(habit)
+
+    return jsonify({"error": "Habit not found."}), 404
+
+# PATCH /habits/<habit_id>/undo_done:
+# Called when the user clicks Undo on the completion toast.
+# Only removes today's completion entry — will not roll back older completions.
+@app.route("/habits/<habit_id>/undo_done", methods=["PATCH"])
+def undo_done(habit_id):
+    habits = read_habits()
+    today  = date.today().isoformat()
+
+    for habit in habits:
+        if habit["id"] == habit_id:
+            completions = habit.get("completions", [])
+            # Remove only entries timestamped today.
+            new_completions = [c for c in completions if not c["timestamp"].startswith(today)]
+            if len(new_completions) == len(completions):
+                return jsonify({"error": "No completion for today to undo."}), 400
+            habit["completions"] = new_completions
+            # Flip done back to False only if no completions remain for today.
+            habit["done"] = any(c["timestamp"].startswith(today) for c in new_completions)
             write_habits(habits)
             return jsonify(habit)
 
@@ -270,11 +341,14 @@ def get_progress(habit_id):
     )
     if result:
         # Attach raw counts so the frontend can display "X of Y" without recalculating.
-        result["target"]  = target
-        result["current"] = current
+        result["target"]   = target
+        result["current"]  = current
+        # Round percent_complete to two decimal places for consistent display.
+        if result.get("percent_complete") is not None:
+            result["percent_complete"] = round(float(result["percent_complete"]), 2)
         return jsonify(result)
     # Fallback if progress-calculator is unreachable.
-    return jsonify({"percent_complete": 0, "projected_completion": None, "status": "behind", "target": target, "current": current}), 200
+    return jsonify({"percent_complete": 0.00, "projected_completion": None, "status": "behind", "target": target, "current": current}), 200
 
 # Start the server:
 if __name__ == "__main__":

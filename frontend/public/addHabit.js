@@ -5,8 +5,9 @@
 
 // Save Habit function:
 async function saveHabit() {
-  const name    = document.getElementById("add-name").value.trim();
-  const errorEl = document.getElementById("add-error");
+  const name     = document.getElementById("add-name").value.trim();
+  const category = document.getElementById("add-category").value;
+  const errorEl  = document.getElementById("add-error");
 
   // Read frequency: 'Custom' text or hidden button:
   const freqCustomEl = document.getElementById("add-frequency-custom");
@@ -20,9 +21,6 @@ async function saveHabit() {
     ? document.getElementById("add-duration").value
     : durCustomEl.value.trim();
 
-  // To be implemented: 
-  // const category = document.getElementById("add-category").value;
-
   // Name validation:
   if (!name) {
     errorEl.textContent = "Habit name is required.";
@@ -30,12 +28,12 @@ async function saveHabit() {
     return;
   }
 
-  // To be implemented:
-  // if (!category) {
-  //   errorEl.textContent = "Please select a category.";
-  //   errorEl.hidden = false;
-  //   return;
-  // }
+  // Category validation:
+  if (!category) {
+    errorEl.textContent = "Please select a category.";
+    errorEl.hidden = false;
+    return;
+  }
 
   errorEl.hidden = true;
 
@@ -43,15 +41,10 @@ async function saveHabit() {
   const response = await fetch("/habits", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name,
-      frequency,
-      duration,
-      // category,  // To be implemented.
-    }),
+    body: JSON.stringify({ name, frequency, duration, category }),
   });
 
-  // If Flask returned success code, proceed to dash. Else, if message 
+  // If Flask returned success code, proceed to dash. Else, if message
   // given by Flask, displays it, if not displays message. Displayed
   // in red block.
   if (response.ok) {
